@@ -1,0 +1,472 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portal del Arte</title>
+
+<style>
+:root{
+  --fondo:#2C0F10;
+  --vino:#461615;
+  --oro:#b99560;
+  --arena:#927355;
+  --claro:#fff4df;
+  --verde:#332D1A;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;padding:20px;
+  min-height:100vh;
+  font-family:Georgia,serif;
+  color:var(--claro);
+  background:
+  radial-gradient(circle at top left,#92735544,transparent 40%),
+  linear-gradient(135deg,#2C0F10,#461615,#332D1A);
+}
+main{max-width:850px;margin:auto}
+h1,h2{text-align:center;color:var(--oro)}
+h1{font-size:clamp(2rem,6vw,3rem)}
+.sub{text-align:center;color:#d4b896}
+button{
+  background:linear-gradient(135deg,#5D4733,#332D1A);
+  color:var(--claro);border:2px solid var(--oro);
+  border-radius:12px;padding:12px 18px;
+  font: bold 1rem Georgia;cursor:pointer;
+  transition:.2s;
+}
+button:hover:not(:disabled){
+  transform:translateY(-2px);background:#927355;
+}
+button:disabled{opacity:.4;cursor:not-allowed}
+.panel{
+  background:#461615eF;border:2px solid var(--oro);
+  border-radius:20px;padding:22px;margin:18px 0;
+  box-shadow:0 8px 30px #0005;
+}
+.menu,.nav{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.menu button{flex:1;min-width:130px}
+.portal{
+  position:relative;width:min(280px,75vw);
+  aspect-ratio:1;margin:30px auto;
+  border-radius:50%;border:4px solid var(--oro);
+  background:radial-gradient(circle,#927355,#5D4733,#2C0F10);
+  box-shadow:0 0 30px #b9956066,inset 0 0 30px #0008;
+  display:grid;place-items:center;
+  transition:transform .5s;
+}
+.portal:hover{transform:scale(1.03)}
+.anillo{
+  position:absolute;inset:0;border-radius:50%;
+  transition:transform .6s;
+}
+.punto{
+  position:absolute;width:42px;height:42px;
+  border-radius:50%;border:2px solid var(--oro);
+  background:#461615;color:white;
+  display:grid;place-items:center;
+  cursor:pointer;font-size:20px;padding:0;
+}
+.punto.activo{background:var(--oro);color:#2C0F10}
+.punto:nth-child(1){top:0;left:50%;transform:translateX(-50%)}
+.punto:nth-child(2){top:25%;right:0}
+.punto:nth-child(3){bottom:25%;right:0}
+.punto:nth-child(4){bottom:0;left:50%;transform:translateX(-50%)}
+.punto:nth-child(5){bottom:25%;left:0}
+.punto:nth-child(6){top:25%;left:0}
+.centro{
+  width:115px;height:115px;border-radius:50%;
+  display:grid;place-items:center;
+  background:#2C0F10;border:3px solid var(--oro);
+  font-size:48px;z-index:1;
+}
+.oculto{display:none!important}
+.periodo{color:#d4b896;text-align:center;font-weight:bold}
+.destacado{
+  background:#92735522;padding:14px;
+  border-left:4px solid var(--oro);
+  border-radius:8px;margin-top:15px;
+}
+.barra{height:10px;background:#332D1A;border-radius:20px;overflow:hidden}
+.progreso{height:100%;background:var(--oro);width:0;transition:.3s}
+.respuesta{
+  display:block;width:100%;text-align:left;margin:10px 0;
+}
+.correcta{background:#31583b!important}
+.incorrecta{background:#813b36!important}
+#feedback{min-height:35px;text-align:center;color:var(--oro)}
+.stat{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.small{text-align:center;color:#d4b896;font-size:.9rem}
+.tabla-puntos{width:100%;border-collapse:collapse;margin:14px 0}.tabla-puntos th,.tabla-puntos td{padding:9px;text-align:left;border-bottom:1px solid #b9956066}.tabla-puntos th{color:var(--oro)}.jugador-input{width:100%;padding:10px;border-radius:8px;border:1px solid var(--oro);font:1rem Georgia;background:#fff4df;color:#2C0F10;margin:8px 0}
+footer{text-align:center;color:#d4b896;font-size:.8rem;margin:25px}
+@media(max-width:500px){
+  body{padding:12px}
+  .panel{padding:16px}
+  .centro{width:95px;height:95px;font-size:38px}
+  .punto{width:35px;height:35px}
+}
+</style>
+</head>
+
+<body>
+<main>
+<h1>🌀 Portal del Arte</h1>
+<p class="sub">Un viaje entre épocas, secretos y obras maestras.</p>
+
+<div class="menu">
+  <button onclick="mostrarModo('explorar')">📜 Explorar</button>
+  <button onclick="mostrarModo('juego')">🎮 Desafío</button>
+  <button onclick="inicio()">🏠 Inicio</button>
+</div>
+
+<!-- INICIO -->
+<section id="inicio" class="panel">
+  <h2>Bienvenida, viajera del tiempo</h2>
+  <div style="text-align:center;font-size:65px">🌀</div>
+  <p>Un antiguo portal conecta seis grandes momentos de la historia del arte.</p>
+  <p>Explorá sus secretos o poné a prueba tus conocimientos para desbloquear cada época.</p>
+  <div class="nav">
+    <button onclick="mostrarModo('explorar')">Explorar épocas ✨</button>
+    <button onclick="mostrarModo('juego')">Comenzar desafío 🎮</button>
+  </div>
+</section>
+
+<!-- EXPLORACIÓN -->
+<section id="explorar" class="oculto">
+  <div class="portal" id="portal">
+    <div class="anillo" id="anillo">
+      <button class="punto activo" onclick="seleccionar(0)">🏛️</button>
+      <button class="punto" onclick="seleccionar(1)">🏟️</button>
+      <button class="punto" onclick="seleccionar(2)">⛪</button>
+      <button class="punto" onclick="seleccionar(3)">🎨</button>
+      <button class="punto" onclick="seleccionar(4)">🎭</button>
+      <button class="punto" onclick="seleccionar(5)">🌽</button>
+    </div>
+    <div class="centro" id="centro">🏛️</div>
+  </div>
+
+  <article class="panel">
+    <h2 id="titulo"></h2>
+    <div class="periodo" id="periodo"></div>
+    <p id="descripcion"></p>
+    <div class="destacado" id="destacado"></div>
+  </article>
+  <div class="nav">
+    <button onclick="mover(-1)">⬅ Anterior</button>
+    <button onclick="mover(1)">Siguiente ➡</button>
+  </div>
+</section>
+
+<!-- JUEGO -->
+<section id="juego" class="oculto">
+  <div class="panel oculto" id="panelPregunta">
+    <div class="stat">
+      <span id="vidas">❤️❤️❤️</span>
+      <span id="puntos">⭐ 0</span>
+    </div>
+    <p class="small" id="nivel"></p>
+    <div class="barra"><div class="progreso" id="progreso"></div></div>
+    <div style="text-align:center;font-size:55px" id="iconoJuego"></div>
+    <h2 id="tituloJuego"></h2>
+    <p id="pregunta"></p>
+    <div id="respuestas"></div>
+    <div id="feedback"></div>
+    <button id="continuar" class="oculto" onclick="siguientePregunta()">Continuar ➜</button>
+  </div>
+  <div class="panel">
+    <h2>🏆 Tabla de posiciones</h2>
+    <p class="small">Los puntajes se guardan en este navegador.</p>
+    <div id="tablaPuntos"></div>
+    <div id="inicioDesafio">
+      <label for="nombreJugador">Nombre del jugador</label>
+      <input id="nombreJugador" class="jugador-input" maxlength="24" placeholder="Escribí tu nombre">
+      <button onclick="comenzarJuego()">Empezar desafío 🎮</button>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTADO -->
+<section id="resultado" class="panel oculto">
+  <h2 id="resultadoTitulo"></h2>
+  <div style="text-align:center;font-size:70px" id="resultadoIcono"></div>
+  <p id="resultadoTexto"></p>
+  <h2 id="resultadoPuntos"></h2>
+  <div id="tablaResultado"></div>
+  <div class="nav">
+    <button onclick="comenzarJuego()">Volver a jugar</button>
+    <button onclick="mostrarModo('explorar')">Explorar arte</button>
+  </div>
+</section>
+
+<footer>✦ Portal del Arte · Grecia, otras épocas y arte precolombino ✦</footer>
+</main>
+
+<script>
+const epocas=[
+{
+ id:"grecia",icono:"🏛️",titulo:"Grecia Antigua",
+ periodo:"c. 800 a.C. – 146 a.C.",
+ descripcion:"El arte griego buscó representar la figura humana, la proporción y la armonía. Sus artistas estudiaron el cuerpo y desarrollaron formas arquitectónicas que influyeron en épocas posteriores.",
+ destacado:"Obras y conceptos: Doríforo, Partenón, órdenes dórico, jónico y corintio, cerámica decorada y teatro.",
+ preguntas:[
+  ["¿Qué buscaban muchas esculturas griegas?",["La figura humana idealizada","Máquinas futuristas","Paisajes industriales"],0],
+  ["¿Qué orden tiene capiteles con volutas?",["Dórico","Jónico","Toscano"],1],
+  ["¿Qué edificio es símbolo de la Acrópolis de Atenas?",["Partenón","Coliseo","Panteón de Roma"],0]
+ ]
+},
+{
+ id:"roma",icono:"🏟️",titulo:"Roma Antigua",
+ periodo:"c. 509 a.C. – 476 d.C.",
+ descripcion:"Roma tomó influencias griegas y desarrolló un arte monumental y práctico. Su arquitectura destacó por la ingeniería, las construcciones públicas y los retratos realistas.",
+ destacado:"Obras y conceptos: Coliseo, acueductos, arcos, bóvedas, concreto romano y retratos escultóricos.",
+ preguntas:[
+  ["¿Qué elemento usaron ampliamente los romanos?",["Arco","Vitral gótico","Rascacielos"],0],
+  ["¿Qué construcción transportaba agua?",["Acueducto","Zigurat","Pirámide"],0],
+  ["¿Qué edificio romano era usado para espectáculos?",["Coliseo","Partenón","Catedral de Chartres"],0]
+ ]
+},
+{
+ id:"medio",icono:"⛪",titulo:"Edad Media",
+ periodo:"Siglo V – Siglo XV",
+ descripcion:"Gran parte del arte medieval europeo estuvo ligado al cristianismo. Las imágenes transmitían relatos religiosos y valores simbólicos. Se desarrollaron estilos como el románico y el gótico.",
+ destacado:"Obras y conceptos: iglesias románicas, catedrales góticas, vitrales, manuscritos iluminados y mosaicos.",
+ preguntas:[
+  ["¿Qué caracteriza al románico?",["Muros gruesos y arcos de medio punto","Rascacielos","Columnas de acero"],0],
+  ["¿Qué elemento es característico del gótico?",["Arco apuntado","Arco de medio punto exclusivamente","Techo plano moderno"],0],
+  ["¿Qué técnica usa pequeñas piezas para formar imágenes?",["Mosaico","Fotografía","Collage digital"],0]
+ ]
+},
+{
+ id:"renacimiento",icono:"🎨",titulo:"Renacimiento",
+ periodo:"Siglos XIV – XVI (aprox.)",
+ descripcion:"El Renacimiento recuperó el interés por la Antigüedad clásica, el ser humano y la naturaleza. Los artistas estudiaron anatomía, perspectiva, proporción y luz para representar el espacio.",
+ destacado:"Obras y conceptos: perspectiva lineal, humanismo, Leonardo da Vinci, Miguel Ángel y Rafael.",
+ preguntas:[
+  ["¿Qué recurso crea profundidad en una superficie plana?",["Perspectiva lineal","Repetición decorativa","Simetría radial"],0],
+  ["¿Quién pintó La última cena?",["Leonardo da Vinci","Caravaggio","Donatello"],0],
+  ["¿Qué idea fue importante en el Renacimiento?",["Humanismo","Futurismo","Expresionismo abstracto"],0]
+ ]
+},
+{
+ id:"barroco",icono:"🎭",titulo:"Barroco",
+ periodo:"c. 1600 – 1750",
+ descripcion:"El Barroco se caracteriza por el movimiento, el dramatismo y los contrastes. Las obras buscaban involucrar al espectador mediante composiciones dinámicas y efectos de luz.",
+ destacado:"Obras y conceptos: claroscuro, teatralidad, curvas, Caravaggio, Bernini y Velázquez.",
+ preguntas:[
+  ["¿Qué recurso contrasta zonas iluminadas y oscuras?",["Claroscuro","Perspectiva lineal","Mosaico"],0],
+  ["¿Qué artista es conocido por su uso dramático de la luz?",["Caravaggio","Policleto","Giotto"],0],
+  ["¿Qué sensación aparece en muchas obras barrocas?",["Movimiento y teatralidad","Inmovilidad absoluta","Simplicidad geométrica"],0]
+ ]
+},
+
+{
+ id:"precolombino",icono:"🌽",titulo:"Arte precolombino",
+ periodo:"Antes de 1492 (con distintas cronologías según cada cultura)",
+ descripcion:"El arte de los pueblos originarios de América fue diverso y estuvo ligado a la vida cotidiana, las creencias, el poder y la naturaleza. Mayas, mexicas (aztecas), incas y muchas otras sociedades desarrollaron tradiciones propias en arquitectura, escultura, cerámica, textiles y metalurgia.",
+ destacado:"Culturas y obras: ciudades mayas como Chichén Itzá; arquitectura mexica en Tenochtitlan; arquitectura y caminos incas en los Andes; cerámica, textiles, tallas y objetos rituales de numerosos pueblos americanos.",
+ preguntas:[
+  ["¿Qué describe mejor el arte precolombino?",["Las diversas tradiciones artísticas de los pueblos de América anteriores a la llegada europea","Un único estilo compartido por todo el continente","Un movimiento nacido en Europa"],0],
+  ["¿En qué región se desarrolló el Imperio inca?",["Los Andes","La península ibérica","El norte de África"],0],
+  ["¿Cuál de estas ciudades fue maya?",["Chichén Itzá","Atenas","Roma"],0]
+ ]
+},
+];
+
+const preguntasExtra={
+ grecia:[
+  ["¿Qué función tenía el teatro en la antigua Grecia?",["Representar tragedias y comedias","Servir como mercado de alimentos","Almacenar barcos"],0],
+  ["¿Qué material se usó mucho en la escultura griega?",["Mármol","Plástico","Hormigón armado moderno"],0],
+  ["¿Qué elemento suele distinguir al capitel corintio?",["Hojas de acanto","Cabezas de león","Figuras de peces"],0]
+ ],
+ roma:[
+  ["¿Para qué servían principalmente los acueductos?",["Llevar agua a las ciudades","Defender las fronteras","Representar obras teatrales"],0],
+  ["¿Qué espacio público romano era un baño y lugar de encuentro?",["Termas","Ágora","Zigurat"],0],
+  ["¿Qué material de construcción usaron ampliamente los romanos?",["Hormigón romano","Acero inoxidable","Adobe plástico"],0]
+ ],
+ medio:[
+  ["¿Qué permitían los vitrales de las catedrales?",["Filtrar luz y narrar historias con imágenes","Sostener los arcos como columnas","Proteger murales del agua"],0],
+  ["¿Qué era un manuscrito iluminado?",["Un libro decorado a mano con imágenes y ornamentación","Un mapa impreso en metal","Una escultura con lámparas"],0],
+  ["¿Qué forma de arco se asocia al estilo románico?",["Arco de medio punto","Arco parabólico de acero","Arco de herradura exclusivamente"],0]
+ ],
+ renacimiento:[
+  ["¿Qué estudió Leonardo da Vinci para comprender el cuerpo humano?",["Anatomía","Astronomía únicamente","Botánica marina"],0],
+  ["¿Qué representa el David de Miguel Ángel?",["Una figura bíblica","Un emperador romano","Un dios egipcio"],0],
+  ["¿Qué técnica organiza líneas que convergen en un punto para crear profundidad?",["Perspectiva lineal","Mosaico bizantino","Grabado en relieve"],0]
+ ],
+ barroco:[
+  ["¿Qué escultor barroco creó El éxtasis de Santa Teresa?",["Gian Lorenzo Bernini","Policleto","Donatello"],0],
+  ["¿Qué pintor español es conocido por Las meninas?",["Diego Velázquez","Rafael","Tiziano"],0],
+  ["¿Qué efecto buscaba a menudo la composición barroca?",["Dramatismo y movimiento","Ausencia total de contraste","Rigidez geométrica sin profundidad"],0]
+ ],
+ precolombino:[
+  ["¿Qué material destacó en muchos textiles andinos?",["Lana de camélidos como la alpaca","Seda industrial","Nailon"],0],
+  ["¿Qué sistema usaban los incas para registrar información con cuerdas y nudos?",["Quipu","Códice de pergamino","Ábaco romano"],0],
+  ["¿Qué característica tuvo la arquitectura inca en los Andes?",["Piedras talladas que encajan con precisión","Arcos góticos apuntados","Cúpulas de vidrio"],0]
+ ]
+};
+epocas.forEach(e=>e.preguntas.push(...preguntasExtra[e.id]));
+let indice=0;
+let modo="";
+let nivel=0,pregunta=0,puntos=0,vidas=3;
+let desbloqueados=1;
+let respondido=false;
+let jugadorActual="";
+let partidaGuardada=false;
+
+const $=id=>document.getElementById(id);
+
+function ocultarTodo(){
+ ["inicio","explorar","juego","resultado"].forEach(id=>$(id).classList.add("oculto"));
+}
+function inicio(){
+ ocultarTodo();
+ $("inicio").classList.remove("oculto");
+}
+function mostrarModo(m){
+ modo=m;
+ ocultarTodo();
+ $(m).classList.remove("oculto");
+ if(m==="explorar")actualizarEpoca();
+ if(m==="juego"){
+   $("panelPregunta").classList.add("oculto");
+   $("inicioDesafio").classList.remove("oculto");
+   actualizarTabla("tablaPuntos");
+ }
+}
+function seleccionar(i){
+ indice=i;
+ actualizarEpoca();
+}
+function mover(d){
+ indice=Math.max(0,Math.min(epocas.length-1,indice+d));
+ actualizarEpoca();
+}
+function actualizarEpoca(){
+ const e=epocas[indice];
+ document.querySelectorAll(".punto").forEach((p,i)=>{
+   const angulo=(i*2*Math.PI)/epocas.length-Math.PI/2;
+   p.style.left=`${50+46*Math.cos(angulo)}%`;
+   p.style.top=`${50+46*Math.sin(angulo)}%`;
+   p.style.transform="translate(-50%,-50%)";
+ });
+ document.querySelectorAll(".punto").forEach((p,i)=>{
+   p.classList.toggle("activo",i===indice);
+ });
+ $("centro").textContent=e.icono;
+ $("titulo").textContent=e.titulo;
+ $("periodo").textContent=e.periodo;
+ $("descripcion").textContent=e.descripcion;
+ $("destacado").textContent=e.destacado;
+}
+function comenzarJuego(){
+ const nombre=$("nombreJugador").value.trim();
+ if(!nombre){alert("Escribí el nombre del jugador para guardar su puntaje.");$("nombreJugador").focus();return}
+ jugadorActual=nombre;partidaGuardada=false;
+ nivel=0;pregunta=0;puntos=0;vidas=3;desbloqueados=1;
+ ocultarTodo();
+ $("juego").classList.remove("oculto");
+ $("panelPregunta").classList.remove("oculto");
+ $("inicioDesafio").classList.add("oculto");
+ renderPregunta();
+}
+function renderPregunta(){
+ respondido=false;
+ const e=epocas[nivel];
+ if(pregunta===0)preguntasNivel=mezclar(e.preguntas);
+ const q=preguntasNivel[pregunta];
+ $("vidas").textContent="❤️".repeat(vidas)+"🖤".repeat(3-vidas);
+ $("puntos").textContent="⭐ "+puntos;
+ $("nivel").textContent=`Época ${nivel+1} de ${epocas.length} · Pregunta ${pregunta+1} de 6`;
+ $("progreso").style.width=`${(nivel*6+pregunta)/(epocas.length*6)*100}%`;
+ $("iconoJuego").textContent=e.icono;
+ $("tituloJuego").textContent=e.titulo;
+ $("pregunta").textContent=q[0];
+ $("feedback").textContent="";
+ $("continuar").classList.add("oculto");
+ $("respuestas").innerHTML="";
+ opcionesActuales=mezclar(q[1].map((texto,i)=>({texto,correcta:i===q[2]})));
+ opcionesActuales.forEach((op,i)=>{
+   const b=document.createElement("button");
+   b.className="respuesta";
+   b.textContent=String.fromCharCode(65+i)+") "+op.texto;
+   b.onclick=()=>responder(i,b);
+   $("respuestas").appendChild(b);
+ });
+}
+function responder(i,boton){
+ if(respondido)return;
+ respondido=true;
+ const q=preguntasNivel[pregunta];
+ const botones=$("respuestas").querySelectorAll("button");
+ botones.forEach(b=>b.disabled=true);
+ const correcta=opcionesActuales.findIndex(op=>op.correcta);
+ if(opcionesActuales[i].correcta){
+   puntos+=100;
+   boton.classList.add("correcta");
+   $("feedback").textContent="¡Correcto! +100 puntos ✨";
+ }else{
+   vidas--;
+   boton.classList.add("incorrecta");
+   botones[correcta].classList.add("correcta");
+   $("feedback").textContent="La respuesta correcta era: "+opcionesActuales[correcta].texto;
+ }
+ $("vidas").textContent="❤️".repeat(vidas)+"🖤".repeat(3-vidas);
+ $("puntos").textContent="⭐ "+puntos;
+ $("continuar").classList.remove("oculto");
+ $("continuar").textContent=vidas===0?"Ver resultado ➜":"Continuar ➜";
+}
+function siguientePregunta(){
+ if(vidas===0){fin(false);return}
+ pregunta++;
+ if(pregunta>=6){
+   desbloqueados=nivel+2;
+   nivel++;pregunta=0;
+   if(nivel>=epocas.length){fin(true);return}
+   $("feedback").textContent="¡Época completada! 🔓";
+ }
+ renderPregunta();
+}
+function mezclar(lista){
+ const copia=[...lista];
+ for(let i=copia.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copia[i],copia[j]]=[copia[j],copia[i]]}
+ return copia;
+}
+function leerPuntajes(){
+ try{return JSON.parse(localStorage.getItem("portalArtePuntajes")||"[]")}catch(e){return []}
+}
+function guardarPuntaje(){
+ if(partidaGuardada)return;
+ const lista=leerPuntajes();
+ lista.push({nombre:jugadorActual,puntos:puntos,fecha:new Date().toISOString()});
+ lista.sort((a,b)=>b.puntos-a.puntos);
+ localStorage.setItem("portalArtePuntajes",JSON.stringify(lista.slice(0,10)));
+ partidaGuardada=true;
+}
+function actualizarTabla(id){
+ const contenedor=$(id);if(!contenedor)return;
+ const lista=leerPuntajes();
+ if(!lista.length){contenedor.innerHTML="<p class='small'>Todavía no hay puntajes. ¡Sé el primero en jugar!</p>";return}
+ const tabla=document.createElement("table");tabla.className="tabla-puntos";
+ tabla.innerHTML="<thead><tr><th>#</th><th>Jugador</th><th>Puntos</th></tr></thead>";
+ const cuerpo=document.createElement("tbody");
+ lista.forEach((r,i)=>{const fila=document.createElement("tr");[String(i+1),r.nombre,String(r.puntos)].forEach(valor=>{const celda=document.createElement("td");celda.textContent=valor;fila.appendChild(celda)});cuerpo.appendChild(fila)});
+ tabla.appendChild(cuerpo);contenedor.replaceChildren(tabla);
+}
+function fin(gano){
+ guardarPuntaje();
+ ocultarTodo();
+ $("resultado").classList.remove("oculto");
+ $("resultadoTitulo").textContent=gano?"¡Maestría artística desbloqueada!":"¡Fin de la aventura!";
+ $("resultadoIcono").textContent=gano?"🏆":"📜";
+ $("resultadoTexto").textContent=gano?
+ "Recorriste todas las épocas del Portal del Arte. ¡Completaste tu viaje!":
+ "Tu aventura terminó por ahora. ¡Podés volver a intentarlo!";
+ $("resultadoPuntos").textContent=`${jugadorActual}: ⭐ ${puntos} / ${epocas.length*600} puntos`;
+ actualizarTabla("tablaResultado");
+}
+actualizarTabla("tablaPuntos");
+inicio();
+</script>
+</body>
+</html>
